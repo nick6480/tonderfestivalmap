@@ -27,7 +27,7 @@ let lastPinPosY;
 
 
 
-let newWidth = screen.width / 2;
+let newWidth = screen.width;
 //console.log(newWidth);
 let newHeight;
 let canvasMap;
@@ -136,6 +136,7 @@ function drawPin (canvas, arr, movedX, movedY, zoomWidth, zoomHeight) {
   //pin.draw(newPinPosX, newPinPosY);
   //console.log(pin)
 }
+
 
 function drawPinZoomIn(arr) {
 
