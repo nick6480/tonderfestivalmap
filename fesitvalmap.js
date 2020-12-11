@@ -1,4 +1,4 @@
-"use strict"
+//"use strict"
 
 import {Canvas} from './modules/canvas.js';
 import {Shape} from './modules/canvas.js';
@@ -8,14 +8,26 @@ import {$} from './modules/nQuery.js';
 const img = document.getElementById("festivalsplads");
 const pinImg = document.getElementById("pin");
 
+let imgWidth;
+let imgHeight;
+
 let mapPosX = 0
 let mapPosY = 0
 
 let pinPosX;
 let pinPosY;
 
+let newPinPosX;
+let newPinPosY;
 
-let newWidth = screen.width;
+let lastPinPosX;
+let lastPinPosY;
+
+
+
+
+
+let newWidth = screen.width / 2;
 //console.log(newWidth);
 let newHeight;
 let canvasMap;
@@ -30,8 +42,8 @@ const context = canvas.getContext('2d');
 
 
  function init () {
-    let imgWidth = img.width;
-    let imgHeight = img.height;
+    imgWidth = img.width;
+    imgHeight = img.height;
     newHeight = aspectRatio(imgWidth, imgHeight, newWidth);
     //console.log(newHeight)
     canvasMap = new Canvas("myCanvas", "transparent", newHeight);
@@ -57,6 +69,14 @@ function hittest(ev) {
       pinPosX = mousePos.x;
       pinPosY = mousePos.y;
 
+      newPinPosX = mousePos.x;
+      newPinPosY = mousePos.y;
+
+      lastPinPosX = pinPosX;
+      lastPinPosY = pinPosY;
+
+
+      //console.log(`${pinPosX}, ${pinPosY}`)
       pin = new Shape(canvasMap, pinPosX, pinPosY, 20, 20);
 
       pins.push(pin);
@@ -69,45 +89,41 @@ function hittest(ev) {
 function drawImageCanvas (canvas, x, y, width, height) {
    canvas.context.drawImage(img, x, y, width, height);
 
-   if (pin !== undefined) {
-     drawPin(canvas, pins)
-   }
-
-  //repeater(canvas, pins);
-  // console.log(pin)
-
 }
 
 
-let newPinPosX = pinPosX;
-let newPinPosY = pinPosY;
+
+
+function drawPin (canvas, arr, movedX, movedY, zoomWidth, zoomHeight) {
 
 
 
-function drawPin (canvas, arr) {
+    if (isPanLimitedX || isPanLimitedX1) {
+      movedX = 0;
+    } else {
+      newPinPosX = lastPinPosX - movedX;
+    }
+
+    if (isPanLimitedY || isPanLimitedY1) {
+      movedY = 0;
+    } else {
+      newPinPosY = lastPinPosY - movedY;
+    }
 
 
-
-  newPinPosX = pinPosX - movedX;
-  newPinPosY = pinPosY - movedY;
-
-  //console.log(newPosX)
-
-  newPinPosX;
-  newPinPosY;
 
 
   if (pins.length >= 2 ) {
-  
+
         canvas.clear();
         canvas.prep();
         pins = []
         arr.shift()
-        console.log(pins)
+        //console.log(pins)
 
         for (let shape of arr) {
             shape.draw(newPinPosX, newPinPosY);
-            console.log(pins)
+            //console.log(pins)
         }
 
 
@@ -121,6 +137,42 @@ function drawPin (canvas, arr) {
   //console.log(pin)
 }
 
+function drawPinZoomIn(arr) {
+
+  newPinPosX += zoomAmount / currentZoom
+  newPinPosY += zoomAmount / currentZoom
+    console.log(`${newPinPosX}, ${newPinPosY}`)
+
+    lastPinPosX = newPinPosX
+    lastPinPosY = newPinPosY
+
+
+  for (let shape of arr) {
+      shape.draw(newPinPosX, newPinPosY);
+      //console.log(pins)
+  }
+}
+
+
+function drawPinZoomOut(arr) {
+
+  mapPosX = mapPosX + zoomAmount / currentZoom
+  mapPosY = mapPosY + zoomAmount / currentZoom
+
+  console.log(`${mapPosX}, ${mapPosY}`)
+
+  newPinPosX -= zoomAmount/100 * currentZoom
+  newPinPosY -= zoomAmount/100 * currentZoom
+  console.log(`${newPinPosX}, ${newPinPosY}`)
+
+  lastPinPosX = newPinPosX
+  lastPinPosY = newPinPosY
+
+  for (let shape of arr) {
+      shape.draw(newPinPosX, newPinPosY);
+      //console.log(pins)
+  }
+}
 
 
 function getMousePos(canvas, ev) {
@@ -141,103 +193,42 @@ function aspectRatio(w, h, nW) {
 
 
 
-function sizeTest() {
-  let ogSizeW = 200;
-  let ogSizeH = 100;
-
-  let ogPosX = 10;
-  let ogPosY = 10
-
-
-
-  let newSizeW = 500;
-  let newSizeH = 250;
-
-
-
-  let wd = newSizeW / ogSizeW;
-  let hd = newSizeW / ogSizeW;
-
-
-  //console.log(wd)
-  //console.log(hd)
-
-  let newPosX = ogPosX*wd;
-  let newPosY = ogPosX*wd
-
-  //console.log(newPosX)
-  //console.log(newPosY)
-}
-
-sizeTest()
-
-
-let redraw = function (cv, arr) {
-
-//console.log(pins)
-
-  if (pins.length >= 2 ) {
-
-        //drawImageCanvas(cv, mapPosX, mapPosY,newWidth, newHeight);
-        cv.clear();
-        cv.prep();
-        pins = []
-        console.log(pins)
-
-        for (let shape of arr) {
-            shape.draw();
-            //console.log(shapes)
-        }
-
-
-  }else {
-    for (let shape of arr) {
-        shape.draw();
-    }
-  }
-}
-
-let repeater = function (cv, arr) {
-    // if this is an animation build a setInterval loop here
-    // if not, just draw
-    redraw(cv, arr);
-}
-
-
 
 
 
 
 // Zoom
 
-
-
-
-
-
-
 let currentZoom = 0;
+let lastZoom = 0;
 let zoomMax = 50;
-
+let zoomAmount = 100;
 
 
 canvas.addEventListener('wheel', checkScrollDirection, {passive: true});
 canvas.addEventListener('mousedown', dragging);
 canvas.addEventListener('mouseup', notDragging);
 canvas.addEventListener('mousemove', pan);
+canvas.addEventListener('mouseleave', enableScroll);
+canvas.addEventListener('mouseenter', disableScroll);
 let scrollDirection;
+
+
+
 
 function checkScrollDirection(event) {
   let mousePos = getMousePos(event.target, canvasMap);
   //console.log(mousePos.x + "," + mousePos.y);
   let x = mousePos.x;
   let y = mousePos.y;
-  disableScroll()
+  //disableScroll()
+
   if (checkScrollDirectionIsUp(event)) {
     currentZoom++
-    if (currentZoom < zoomMax) {
-      zoomIn(x, y)
 
+    if (currentZoom < zoomMax) {
+      zoomIn()
+      scrollDirection = "zoomIn"
     } else if (currentZoom = zoomMax) {
       currentZoom = 50;
     }
@@ -246,9 +237,10 @@ function checkScrollDirection(event) {
 
   } else {
     currentZoom--
-    if (currentZoom >= 0) {
-      zoomOut(x, y)
 
+    if (currentZoom >= 0) {
+      zoomOut()
+      scrollDirection = "zoomOut"
     } else if (currentZoom < 0) {
       currentZoom = 0;
     }
@@ -268,32 +260,78 @@ function checkScrollDirectionIsUp(event) {
 let zoomWidth = newWidth;
 let zoomHeight = newHeight;
 
+
+
+
+
+
+
+
+
+
+
 function zoomIn(x, y) {
-  zoomWidth = zoomWidth + 100
+  console.log(zoomWidth)
+  console.log(zoomAmount)
+  zoomWidth = zoomWidth + zoomAmount
+  console.log(zoomWidth)
   zoomHeight = aspectRatio(newWidth, newHeight, zoomWidth);
 
 
 
+  let mousePos = getMousePos(event.target, event);
+  //console.log(mousePos.x)
+
+
+
+
+  limitPan()
+
   canvasMap.clear();
   canvasMap.prep();
 
+
+
+  newPosX = mapPosX
+  newPosY = mapPosY
+
   drawImageCanvas(canvasMap, -mapPosX, -mapPosY, zoomWidth, zoomHeight);
+  //drawPin(canvasMap, pins, movedX, movedY, zoomWidth, zoomHeight);
+  drawPinZoomIn(pins)
 }
+
+
+
+
+
+
+
+
+
+
 
 
 function zoomOut() {
   if (zoomWidth > newWidth) {
-    zoomWidth = zoomWidth - 100
+    zoomWidth = zoomWidth - zoomAmount
     zoomHeight = aspectRatio(newWidth, newHeight, zoomWidth);
 
+    let mousePos = getMousePos(event.target, event);
+
+    //mapPosX += mousePos.x / 2
+    //mapPosY += mousePos.y / 2
 
     canvasMap.clear();
     canvasMap.prep();
 
     drawImageCanvas(canvasMap, -mapPosX, -mapPosY, zoomWidth, zoomHeight);
+    //drawPin(canvasMap, pins, movedX, movedY, zoomWidth, zoomHeight);
+    drawPinZoomOut(pins)
   }
 
 }
+
+
 
 
 let isDragging = false;
@@ -303,20 +341,6 @@ let currentTransformedCursor;
 
 let lastPosX = mapPosX;
 let lastPosY = mapPosY;
-
-
-
-
-
-function getTransformedPoint(x, y) {
-	const transform = context.getTransform();
-  const inverseZoom = 1 / transform.a;
-
-  const transformedX = inverseZoom * x - inverseZoom * transform.e;
-  const transformedY = inverseZoom * y - inverseZoom * transform.f;
-  return { x: transformedX, y: transformedY };
-}
-
 
 
 
@@ -333,9 +357,59 @@ function notDragging() {
   isDragging = false;
   lastPosX = mapPosX;
   lastPosY = mapPosY;
+
+    lastPinPosX = newPinPosX;
+    lastPinPosY = newPinPosY;
+
+
+
+
   //console.log(lastPosX)
 
 }
+let isPanLimitedX1 = false;
+let isPanLimitedY1 = false;
+let isPanLimitedX = false;
+let isPanLimitedY = false;
+
+function limitPan() {
+  if (mapPosX <= 0) {
+    isPanLimitedX1 = true;
+    //console.log(isPanLimitedX)
+    mapPosX = 0;
+    //console.log("1")
+  }  else {
+    isPanLimitedX1 = false
+  }
+  if (mapPosY <= 0) {
+    isPanLimitedY1 = true;
+    mapPosY = 0;
+    //console.log("2")
+  } else {
+    isPanLimitedY1 = false
+  }
+
+  if (zoomAmount*currentZoom <= mapPosX) {
+    isPanLimitedX = true;
+    //console.log("3")
+    mapPosX = zoomAmount*currentZoom;
+
+  } else {
+    isPanLimitedX = false
+  }
+
+
+  if ((zoomAmount*currentZoom) * (imgHeight / imgWidth / 1) <= mapPosY ) {
+      isPanLimitedY = true;
+    mapPosY = (zoomAmount*currentZoom) * (imgHeight / imgWidth / 1);
+    //console.log("4")
+  } else {
+     isPanLimitedY = false
+  }
+  //console.log(isPanLimitedX)
+}
+
+
 
 let newPosX = mapPosX;
 let newPosY = mapPosY;
@@ -343,73 +417,54 @@ let newPosY = mapPosY;
 let movedX = 0;
 let movedY = 0;
 
+var timesPerSecond = 30; // how many times to fire the event per second
+var wait = false;
 
 function pan(ev) {
-  currentTransformedCursor = getTransformedPoint(event.offsetX, event.offsetY);
-  //console.log(`Original X: ${event.offsetX}, Y: ${event.offsetY}`)
-  //console.log(`Transformed X: ${currentTransformedCursor.x}, Y: ${currentTransformedCursor.y}`);
 
-  if (isDragging) {
-    if (zoomWidth > newWidth) {
+  // Throttle
+  if (!wait) {
+      // fire the event
+      if (isDragging) {
+        if (zoomWidth > newWidth) {
 
-
-
-      canvasMap.clear();
-      canvasMap.prep();
-      let mousePos = getMousePos(event.target, ev);
-      //console.log(mousePos.x)
+          canvasMap.clear();
+          canvasMap.prep();
+          let mousePos = getMousePos(event.target, ev);
+          //console.log(mousePos.x)
 
 
-
-      //let movedX = mousePos.x - dragStartPosition.x
-
-      movedX = (dragStartPosition.x - mousePos.x)
-      movedY = (dragStartPosition.y - mousePos.y)
+          movedX = (dragStartPosition.x - mousePos.x)
+          movedY = (dragStartPosition.y - mousePos.y)
 
 
-      //console.log(`moved ${movedX}, ${movedY}`)
-      //let movedY = mousePos.y - dragStartPosition.y
+          newPosX = lastPosX + movedX;
+          newPosY = lastPosY + movedY;
+
+          //console.log(newPosX)
+
+          mapPosX = newPosX;
+          mapPosY = newPosY;
 
 
-      newPosX = lastPosX + movedX;
-      newPosY = lastPosY + movedY;
-
-      //console.log(newPosX)
-
-      mapPosX = newPosX;
-      mapPosY = newPosY;
 
 
-/*
-      if (mapPosX < 0) {
-        mapPosX = 0;
+          limitPan()
+
+          drawImageCanvas(canvasMap, -mapPosX, -mapPosY, zoomWidth, zoomHeight);
+
+          drawPin(canvasMap, pins, movedX, movedY, zoomWidth, zoomHeight);
+        }
       }
-      if (mapPosY < 0) {
-        mapPosY = 0;
-      }
-      if (mapPosY > newWidth) {
-        mapPosY = 0;
-      }
-      if (mapPosY > newHeight) {
-        mapPosY = 0;
-      }
-*/
-      //console.log(`start ${dragStartPosition.x}, ${dragStartPosition.y}`)
-
-      //console.log(`new ${mousePos.x}, ${mousePos.y}`)
+      // stop any further events
+      wait = true;
+      // after a fraction of a second, allow events again
+      setTimeout(function () {
+          wait = false;
+      }, 1000 / timesPerSecond);
 
 
-      //console.log(`mappos ${mapPosX}, ${mapPosY}`)
-
-      //console.log(mapPosX)
-
-
-      drawImageCanvas(canvasMap, -mapPosX, -mapPosY, zoomWidth, zoomHeight);
-
-      //drawPin()
-    }
   }
-
 
 }
 
@@ -421,10 +476,6 @@ function disableScroll() {
 function enableScroll() {
     document.body.classList.remove("stop-scrolling");
 }
-
-
-
-
 
 
 
