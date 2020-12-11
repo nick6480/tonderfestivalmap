@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'/>-
+        <script src='./js/newQ.js'></script>
+        <script type="module" src="map/festivalmap.js"></script>
+        <script type="module">
+            //import {pins} from './map/festivalmap.js';
+            import {pinPosX} from './map/festivalmap.js';
+            import {pinPosY} from './map/festivalmap.js';
+            const manipulateForm = function (e) {
+                e.preventDefault();
+                // læs m ajax
+                let oReq = new XMLHttpRequest();
+                oReq.addEventListener("load", function () {
+                    let hentet = [];
+                   if (this.responseText.length > 0)
+                        hentet = JSON.parse(this.responseText); // get and objectify
+                    // udvid array m indtastet
+                  let n = $('name').value;
+                    let m = $('mobil').value;
+                    let b = $('besked').value;
+                    let nn = $('need').value;
+                    //let pos = pins[0].x
+
+                   let o = {
+                        name: n,
+                        mobil: m,
+                        besked: b,
+                        need: nn,
+                        posX: pinPosX,
+                        posY: pinPosY,
+                    };
+
+                    hentet.push(o);                             // add new
+                    $('json').value = JSON.stringify(hentet);   // stringify
+                    document.forms['form22'].submit();          // send
+
+                });
+                oReq.open("GET", "getIncidents.php");
+                oReq.send();
+            };
+            const doThis = function () {
+                headAndShoulders('Submit');
+                feet(2020);
+                $('butt').addEventListener('click', manipulateForm)
+            };
+            window.addEventListener('load', doThis);
+        </script>
+    </head>
+    <body>
+        <header><h1 class='title'></h1></header>    <!-- autofilled -->
+        <main>
+
+
+          <img id="festivalsplads" style="display: none;"
+          src="map/festivalsplads.png" alt="Kort over festivalpladsen">
+
+          <canvas id="myCanvas0"
+          style="border:1px solid #d3d3d3;">
+          </canvas>
+
+          <p id="position"></p>
+
+            <form name='form22' action='./receiveAndStore.php' method='post'>
+                    <p>
+                        <label for='name'>Name:</label>
+                        <br/>
+                        <input id='name' name='name' type='text'/>
+                    </p>
+                    <p>
+                        <br/>
+                        <label for='mobil'>Mobil:</label>
+                        <br/>
+                        <input id='mobil' name='mobil' type='text'>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <label for='besked'>Besked:</label>
+                        <br/>
+                        <input id='besked' name='besked' type="text">
+                        <br/>
+                        <br/>
+                        <label for='need'>Hvilken fagperson har du brug for?:</label>
+                        <br/>
+                        <input id='need' name='need' type="text">
+                        <input id='json' name='json' type='hidden' value='' readonly/>
+                    </p>
+                    <p>
+                        <button id='butt'>Off You Go</button>
+                    </p>
+            </form>
+            <p><a href='./tf.html'>incidents</a></p>
+        </main>
+        <footer></footer>              <!-- autofilled -->
+    </body>
+</html>

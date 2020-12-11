@@ -164,6 +164,7 @@ function drawPinZoomOut(arr) {
 
   newPinPosX -= zoomAmount/100 * currentZoom
   newPinPosY -= zoomAmount/100 * currentZoom
+  
   console.log(`${newPinPosX}, ${newPinPosY}`)
 
   lastPinPosX = newPinPosX
