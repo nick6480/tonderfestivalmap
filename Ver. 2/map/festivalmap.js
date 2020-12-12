@@ -70,10 +70,8 @@ let canvas = [];
 
 
     for (var i = 0; i < canvasArr.length; i++) {
-      canvasMap = new Canvas(`myCanvas${i}`, "transparent", newHeight);
+      canvasMap = new Canvas(`myCanvas${i}`, "transparent", newHeight, posX[i], posY[i]);
       canvasMap.canvas.addEventListener("dblclick", hittest);
-      canvasMap.canvas.pinX = posX[i];
-      canvasMap.canvas.pinY = posY[i];
 
 
       drawImageCanvas(canvasMap, canvasMap.mapPosX, canvasMap.mapPosY, newWidth, newHeight);
@@ -225,6 +223,7 @@ function drawPinInit(cv, arr, movedX, movedY, zoomWidth, zoomHeight) {
 
 function drawPin (cv, arr, movedX, movedY, zoomWidth, zoomHeight) {
 
+    let cvIndex = findIndex(canvas, currentCanvas.id)
 
 
     if (cv.isPanLimitedX || cv.isPanLimitedX1) {
@@ -240,7 +239,7 @@ function drawPin (cv, arr, movedX, movedY, zoomWidth, zoomHeight) {
     }
 
 
-
+/*
 if (posX.length == 0 && posY.length == 0) {
 
   if (pins.length >= 2 ) {
@@ -264,7 +263,7 @@ if (posX.length == 0 && posY.length == 0) {
           shape.draw(newPinPosX, newPinPosY, cv);
       }
     }
-  }
+  }*/
 }
 
 
@@ -307,52 +306,6 @@ if (posX.length == 0 && posY.length == 0) {
     }
     //console.log(isPanLimitedX)
 }
-
-
-/*
-function drawPinZoomIn(arr, cv) {
-
-
-
-  newPinPosX += cv.zoomAmount / cv.currentZoom
-  newPinPosY += cv.zoomAmount / cv.currentZoom
-    //console.log(`${newPinPosX}, ${newPinPosY}`)
-
-    lastPinPosX = newPinPosX
-    lastPinPosY = newPinPosY
-
-  for (var i = 0; i < arr.length; i++) {
-    arr[i].draw(newPinPosX, newPinPosY);
-  }
-
-}
-
-
-function drawPinZoomOut(arr, cv) {
-
-  mapPosX = mapPosX + zoomAmount / currentZoom
-  mapPosY = mapPosY + zoomAmount / currentZoom
-
-  //console.log(`${mapPosX}, ${mapPosY}`)
-
-  newPinPosX -= zoomAmount/100 * currentZoom
-  newPinPosY -= zoomAmount/100 * currentZoom
-  //console.log(`${newPinPosX}, ${newPinPosY}`)
-
-  lastPinPosX = newPinPosX
-  lastPinPosY = newPinPosY
-
-  for (let shape of arr) {
-      shape.draw(newPinPosX, newPinPosY);
-      //console.log(pins)
-  }
-}
-
-*/
-
-
-
-
 
 
 
@@ -440,7 +393,7 @@ function zoomIn(cv, x, y) {
 
 
   drawImageCanvas(can, -can.mapPosX, -can.mapPosY, can.zoomWidth, can.zoomHeight);
-
+  drawPinZoom(pins, can)
 }
 
 
@@ -450,17 +403,15 @@ function zoomOut(cv) {
 
     let can = findCanvas(canvas, cv)
     let canIndex = findIndex(canvas, cv)
-    //console.log(cv)
 
-    //console.log(can)
-    //console.log(canIndex)
+
 
     can.zoomWidth = can.zoomWidth - can.zoomAmount
     //console.log(zoomWidth)
     can.zoomHeight = aspectRatio(newWidth, newHeight, can.zoomWidth);
 
 
-    //console.log(`W ${can.zoomWidth}, H ${can.zoomHeight}`)
+
 
 
     let mousePos = getMousePos(event.target, event);
@@ -474,22 +425,30 @@ function zoomOut(cv) {
 
 
     drawImageCanvas(can, -can.mapPosX, -can.mapPosY, can.zoomWidth, can.zoomHeight);
-    
+    drawPinZoom(pins, can)
 
 
 }
 
 
 
+function drawPinZoom(arr, cv) {
+
+  let cvIndex = findIndex(canvas, currentCanvas.id)
+
+  cv.newPinPosX = cv.percentX * cv.zoomWidth / 100;
+  cv.newPinPosY = cv.percentY * cv.zoomHeight / 100;
+
+  arr[cvIndex].draw(cv.newPinPosX, cv.newPinPosY, cv);
+}
 
 
 
+// Pan
 
 
 function dragging(ev) {
   let cv = findCanvas(canvas, currentCanvas.id)
-
-
 
   cv.isDragging = true;
   let mousePos = getMousePos(event.target, ev);
@@ -508,7 +467,7 @@ function notDragging() {
     //lastPinPosX = newPinPosX;
     //lastPinPosY = newPinPosY;
 
-  //console.log(lastPosX)
+  console.log(cv.lastPosX)
 
 }
 
@@ -523,27 +482,26 @@ var wait = false;
 
 function pan(ev) {
   let cv = findCanvas(canvas, currentCanvas.id)
-  console.log(cv)
-  // Throttle
+
   if (!wait) {
       // fire the event
       if (cv.isDragging) {
         if (cv.zoomWidth > newWidth) {
 
-          cv.clear();
-          cv.prep();
+          //cv.clear();
+          //cv.prep();
           let mousePos = getMousePos(event.target, ev);
           //console.log(mousePos.x)
 
 
           cv.movedX = (cv.dragStartPosition.x - mousePos.x)
           cv.movedY = (cv.dragStartPosition.y - mousePos.y)
-          console.log(`${mousePos.x}, ${mousePos.y}`)
+          //console.log(`${mousePos.x}, ${mousePos.y}`)
 
           cv.newPosX = cv.lastPosX + cv.movedX;
           cv.newPosY = cv.lastPosY + cv.movedY;
 
-            console.log(`${cv.newPosX}, ${cv.newPosY}`)
+            //console.log(`${cv.newPosX}, ${cv.newPosY}`)
 
           cv.mapPosX = cv.newPosX;
           cv.mapPosY = cv.newPosY;
@@ -555,7 +513,7 @@ function pan(ev) {
 
           drawImageCanvas(cv, -cv.mapPosX, -cv.mapPosY, cv.zoomWidth, cv.zoomHeight);
 
-          drawPin(cv, pins, cv.movedX, cv.movedY, cv.zoomWidth, cv.zoomHeight);
+          drawPinPan(cv, pins, cv.movedX, cv.movedY, cv.zoomWidth, cv.zoomHeight);
         }
       }
       // stop any further events
@@ -569,6 +527,60 @@ function pan(ev) {
   }
 
 }
+
+
+
+function drawPinPan(cv, arr, x, y, width, height) {
+
+  let cvIndex = findIndex(canvas, currentCanvas.id)
+  console.log(cvIndex);
+
+
+  if (cv.isPanLimitedX || cv.isPanLimitedX1) {
+    cv.movedX = 0;
+  } else {
+    cv.newPinPosX = cv.lastPinPosX - cv.movedX;
+  }
+
+  if (cv.isPanLimitedY || cv.isPanLimitedY1) {
+    cv.movedY = 0;
+  } else {
+    cv.newPinPosY = cv.lastPinPosY - cv.movedY;
+  }
+
+
+  cv.lastPinPosX += x;
+  cv.lastPinPosY += y;
+
+  arr[cvIndex].draw(cv.lastPinPosX, cv.lastPinPosY, cv)
+
+
+  console.log(`${cv.lastPinPosX}, ${cv.lastPinPosY}`)
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //console.log()
 function disableScroll() {

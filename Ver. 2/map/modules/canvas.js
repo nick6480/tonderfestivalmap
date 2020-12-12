@@ -9,7 +9,7 @@ let newHeight = 0
 
 
 export class Canvas {
-    constructor(canvasId, color, newHeight, ) {
+    constructor(canvasId, color, newHeight, pinX, pinY) {
         this.canvas = $(canvasId);
         this.context = this.canvas.getContext("2d");
         this.color = color;
@@ -28,11 +28,13 @@ export class Canvas {
         this.newPosX = 0
         this.newPosY = 0
 
+
+
         // Zoom
         this.currentZoom = 0;
         this.lastZoom = 0;
         this.zoomMax = 50;
-        this.zoomAmount = 100;
+        this.zoomAmount = 125;
 
         this.zoomWidth = newWidth;
         this.zoomHeight;
@@ -60,8 +62,21 @@ export class Canvas {
 
 
         // Pin position
-        this.pinX = 0;
-        this.pinY = 0
+        this.pinX = parseFloat(pinX.innerHTML);
+        this.pinY = parseFloat(pinY.innerHTML);
+
+
+        this.newPinPosX = this.pinX;
+        this.newPinPosY = this.pinY;
+
+
+        this.lastPinPosX = this.newPinPosX;
+        this.lastPinPosY = this.newPinPosY;;
+
+
+        this.percentX = this.pinX / this.getWidth() * 100
+        this.percentY = this.pinY / this.getHeight() * 100
+
 
 
         this.prep();
@@ -126,6 +141,9 @@ export class Shape {
 
     draw(x, y, cv) {
       this.ctx = cv.context;
+      this.x = x;
+      this.y = y;
+
       this.ctx.save();
       this.ctx.translate(x,y);
       this.ctx.beginPath();
