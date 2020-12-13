@@ -6,21 +6,14 @@ import {$} from './modules/nQuery.js';
 import {aspectRatio} from './modules/nQuery.js';
 //import {canvasArrFunc} from '../js/tfScript.js';
 
-let canvasArr =  Array.from(document.getElementsByTagName("CANVAS"));
-console.log(canvasArr)
-
-
-export var posX = Array.from(document.querySelectorAll(".positionsX"));
-export var posY = Array.from(document.querySelectorAll(".positionsY"));
-
-//console.log(posX)
-//console.log(posY)
-
-
-//  import {canvasArrFunc} from '../js/tfScript.js'
+let canvasArr;
 
 
 
+export var posX;
+export var posY;
+
+console.log(posX, posY)
 
 
 let img;
@@ -29,23 +22,10 @@ let img;
 let imgWidth;
 let imgHeight;
 
-let hasInit;
-/*
-let pinsPos = []
-
-export let pinPosX;
-export let pinPosY;
-
-let newPinPosX;
-let newPinPosY;
-
-let lastPinPosX;
-let lastPinPosY;
-*/
 
 
-let newWidth = screen.width;
 //console.log(newWidth);
+let newWidth;
 let newHeight;
 let canvasMap;
 let map;
@@ -62,23 +42,32 @@ let canvas = [];
 
 
 
-
-
-
-
- function init () {
+ export function init (canvasAjax, posXAjax, posYAjax) {
     img = document.getElementById("festivalsplads");
     imgWidth = img.width;
     imgHeight = img.height;
+
+    newWidth = screen.width;
     newHeight = aspectRatio(imgWidth, imgHeight, newWidth);
     //console.log(canvasArr)
-
+      console.log(canvasAjax);
     //console.log(newHeight)
+    if (typeof canvasAjax !== 'object' && canvasAjax == null ) {
+      canvasArr = canvasAjax
+      posX = posXAjax;
+      posY = posYAjax;
+    } else {
+      canvasArr =  Array.from(document.getElementsByTagName("CANVAS"));
+      posX = Array.from(document.querySelectorAll(".positionsX"));
+      posY = Array.from(document.querySelectorAll(".positionsY"));
+    }
+
+
 
 
     for (var i = 0; i < canvasArr.length; i++) {
       canvasMap = new Canvas(`myCanvas${i}`, "transparent", newHeight, posX[i], posY[i]);
-
+      console.log(posX[i], posY[i])
 
 
       drawImageCanvas(canvasMap, canvasMap.mapPosX, canvasMap.mapPosY, newWidth, newHeight);
@@ -92,30 +81,24 @@ let canvas = [];
       drawPinInit(canvas[i], pin, posX[i], posY[i])
 
 
-
+      //readIncidents()
     }
-    hasInit = true;
 
 
 
-
-
-    //console.log(canvas)
+  for (var i = 0; i < canvasArr.length; i++) {
+    canvasArr[i].addEventListener("click", activeCanvas);
+    canvasArr[i].addEventListener("dblclick", hittest);
+    canvasArr[i].addEventListener("mouseenter", activeCanvas);
+    canvasArr[i].addEventListener('wheel', checkScrollDirection, {passive: true});
+    canvasArr[i].addEventListener('mousedown', dragging);
+    canvasArr[i].addEventListener('mouseup', notDragging);
+    canvasArr[i].addEventListener('mousemove', pan);
+    canvasArr[i].addEventListener('mouseleave', enableScroll);
+    canvasArr[i].addEventListener('mouseenter', disableScroll);
+    canvasArr[i].addEventListener('mousemove', disableScroll);
+  }
 }
-
-
-for (var i = 0; i < canvasArr.length; i++) {
-  canvasArr[i].addEventListener("click", activeCanvas);
-  canvasArr[i].addEventListener("dblclick", hittest);
-  canvasArr[i].addEventListener("mouseenter", activeCanvas);
-  canvasArr[i].addEventListener('wheel', checkScrollDirection, {passive: true});
-  canvasArr[i].addEventListener('mousedown', dragging);
-  canvasArr[i].addEventListener('mouseup', notDragging);
-  canvasArr[i].addEventListener('mousemove', pan);
-  canvasArr[i].addEventListener('mouseleave', enableScroll);
-  canvasArr[i].addEventListener('mouseenter', disableScroll);
-}
-
 
 
 let currentCanvas;
@@ -133,7 +116,25 @@ function getOffset(el) {
   };
 }
 
+if ($("butt") !== null) {
+  let submitBtn = $("butt")
+  submitBtn.addEventListener("click", calcFinalPinPos);
 
+}
+
+
+
+function calcFinalPinPos() {
+  let cv = findCanvas(canvas, currentCanvas.id)
+
+  cv.finalPinX = cv.lastPinPosX;
+  cv.finalPinY = cv.lastPinPosY;
+
+  finalPinX = cv.finalPinX
+  finalPinY = cv.finalPinY
+
+  console.log(cv.finalPinX, cv.finalPinY)
+}
 
 
 
@@ -234,13 +235,7 @@ function hittest(ev) {
         pins.shift()
 
     }
-
-
-
-
   }
-
-
 }
 
 
@@ -469,8 +464,8 @@ function drawPinZoom(arr, cv) {
 
   cv.newPinPosX = cv.getPercent().x * cv.zoomWidth / 100;
   cv.newPinPosY = cv.getPercent().y * cv.zoomHeight / 100;
-  console.log(cv.pinX, cv.pinY)
-  console.log(cv.getPercent().x)
+  //console.log(cv.pinX, cv.pinY)
+  //console.log(cv.getPercent().x)
 
 
   cv.newPinPosX -= cv.mapPosX
@@ -587,7 +582,8 @@ function enableScroll() {
     document.body.classList.remove("stop-scrolling");
 }
 
-
+export let finalPinX;
+export let finalPinY;
 
 
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="data/incidents.json"></script>
+</head>
+<body>
+    <div id="myData">
+    </div>
+
+<script>
+
+
+fetch('data/incidents.json')
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (data) {
+    appendData(data);
+  })
+  .catch(function (err) {
+    console.log(err);
+  });
+
+
+  /* mainContainer = div i html, hvor dataen bliver vist. Et forloop til at loope igennem dataen og vise det */
+  function appendData(data) {
+  var mainContainer = document.getElementById("myData");
+  for (var i = 0; i < data.length; i++) {
+    var div = document.createElement("div");
+    div.innerHTML = '<br>' + '<b>incident:</b> ' + '<br>' + '<br>' + '<b>Name:</b> ' + data[i].name + '<br>'
+     + '<b>mobil: </b>' + data[i].mobil + '<br>'+ '<b>besked:</b> ' + data[i].besked + '<br>' + '<b>Fagperson:</b> ' + data[i].need + '<br>' + '<button id="slet" onclick="clickFunc()">Marker som løst</button>';
+    mainContainer.appendChild(div);
+
+  }
+
+document.getElementById("slet").addEventListener = ("click", clickFunc = function () {
+console.log(incidents, 1);
+
+});
+}
+
+
+    </script>
+</body>
+</html>
+
+<!-- https://howtocreateapps.com/fetch-and-display-json-html-javascript/ -->

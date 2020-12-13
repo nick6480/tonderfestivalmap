@@ -2,13 +2,13 @@
 <html>
     <head>
         <meta charset='utf-8'/>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'/>-
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+        <title class='title'></title>
         <script src='./js/newQ.js'></script>
         <script type="module" src="map/festivalmap.js"></script>
         <script type="module">
-            //import {pins} from './map/festivalmap.js';
-            import {posX} from './map/festivalmap.js';
-            import {posY} from './map/festivalmap.js';
+            import {finalPinX} from './map/festivalmap.js';
+            import {finalPinY} from './map/festivalmap.js';
 
             const manipulateForm = function (e) {
                 e.preventDefault();
@@ -19,19 +19,18 @@
                    if (this.responseText.length > 0)
                         hentet = JSON.parse(this.responseText); // get and objectify
                     // udvid array m indtastet
-                  let n = $('name').value;
+                    let n = $('name').value;
                     let m = $('mobil').value;
                     let b = $('besked').value;
                     let nn = $('need').value;
-                    //let pos = pins[0].x
-
-                   let o = {
+                    let o = {
                         name: n,
                         mobil: m,
                         besked: b,
                         need: nn,
-                        posX: posX,
-                        posY: posY,
+                        posY: finalPinY,
+                        posX: finalPinX,
+
                     };
 
                     hentet.push(o);                             // add new
@@ -53,17 +52,11 @@
     <body>
         <header><h1 class='title'></h1></header>    <!-- autofilled -->
         <main>
-
-
           <img id="festivalsplads" style="display: none;"
           src="map/festivalsplads.png" alt="Kort over festivalpladsen">
-
           <canvas id="myCanvas0"
           style="border:1px solid #d3d3d3;">
           </canvas>
-
-          <p id="position"></p>
-
             <form name='form22' action='./receiveAndStore.php' method='post'>
                     <p>
                         <label for='name'>Name:</label>
@@ -72,26 +65,26 @@
                     </p>
                     <p>
                         <br/>
+                        <p>
                         <label for='mobil'>Mobil:</label>
-                        <br/>
                         <input id='mobil' name='mobil' type='text'>
-                        <br/>
-                        <br/>
-                        <br/>
+                        </p>
+                        <p>
                         <label for='besked'>Besked:</label>
-                        <br/>
                         <input id='besked' name='besked' type="text">
-                        <br/>
-                        <br/>
+                        </p>
+                        <p>
                         <label for='need'>Hvilken fagperson har du brug for?:</label>
-                        <br/>
                         <input id='need' name='need' type="text">
+                        </p>
                         <input id='json' name='json' type='hidden' value='' readonly/>
                     </p>
                     <p>
-                        <button id='butt'>Off You Go</button>
+                        <button id='butt'>Off You Go </button>
+
                     </p>
             </form>
+              <button id='butt2'>Test</button>
             <p><a href='./tf.html'>incidents</a></p>
         </main>
         <footer></footer>              <!-- autofilled -->
