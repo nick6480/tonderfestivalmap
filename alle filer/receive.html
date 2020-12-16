@@ -33,7 +33,7 @@ fetch('data/incidents.json')
     div.innerHTML = '<br>' + '<b>incident:</b> ' + '<br>' + '<br>' + '<b>Name:</b> ' + data[i].name + '<br>'
      + '<b>mobil: </b>' + data[i].mobil + '<br>'+ '<b>besked:</b> ' + data[i].besked + '<br>' + '<b>Fagperson:</b> ' + data[i].need + '<br>' + '<button id="slet" onclick="clickFunc()">Marker som løst</button>';
     mainContainer.appendChild(div);
-
+    
   }
 
 document.getElementById("slet").addEventListener = ("click", clickFunc = function () {

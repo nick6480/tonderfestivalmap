@@ -4,7 +4,7 @@ import {Canvas} from './modules/canvas.js';
 import {Shape} from './modules/canvas.js';
 import {$} from './modules/nQuery.js';
 import {aspectRatio} from './modules/nQuery.js';
-//import {canvasArrFunc} from '../js/tfScript.js';
+
 
 let canvasArr;
 
@@ -13,7 +13,7 @@ let canvasArr;
 export var posX;
 export var posY;
 
-console.log(posX, posY)
+
 
 
 let img;
@@ -33,14 +33,8 @@ let map;
 let pins = [];
 let pin;
 
-//let canvasArr = []
 
 let canvas = [];
-
-//const context = canvas.getContext('2d');
-
-
-
 
  export function init (canvasAjax, posXAjax, posYAjax) {
     img = document.getElementById("festivalsplads");
@@ -56,6 +50,7 @@ let canvas = [];
       canvasArr = canvasAjax
       posX = posXAjax;
       posY = posYAjax;
+      console.log(posX, posY)
     } else {
       canvasArr =  Array.from(document.getElementsByTagName("CANVAS"));
       posX = Array.from(document.querySelectorAll(".positionsX"));
@@ -80,8 +75,6 @@ let canvas = [];
 
       drawPinInit(canvas[i], pin, posX[i], posY[i])
 
-
-      //readIncidents()
     }
 
 
@@ -94,9 +87,10 @@ let canvas = [];
     canvasArr[i].addEventListener('mousedown', dragging);
     canvasArr[i].addEventListener('mouseup', notDragging);
     canvasArr[i].addEventListener('mousemove', pan);
-    canvasArr[i].addEventListener('mouseleave', enableScroll);
     canvasArr[i].addEventListener('mouseenter', disableScroll);
     canvasArr[i].addEventListener('mousemove', disableScroll);
+    canvasArr[i].addEventListener('mouseleave', enableScroll);
+
   }
 }
 
@@ -104,12 +98,12 @@ let canvas = [];
 let currentCanvas;
 function activeCanvas(ev) {
   currentCanvas = this;
-  //console.log(currentCanvas)
+
 }
 
 function getOffset(el) {
   const rect = el.getBoundingClientRect();
-  //console.log(`${el} position is ${rect.left},${rect.top}`)
+
   return {
     left: rect.left + window.scrollX,
     top: rect.top + window.scrollY
@@ -242,16 +236,6 @@ function hittest(ev) {
 
 
 function drawPin(cv, arr) {
-
-  //cv.clear();
-  //cv.prep();
-
-
-  //cv.zoomHeight = aspectRatio(newWidth, newHeight, cv.zoomWidth);
-
-  //drawImageCanvas(cv, cv.lastPosX, cv.lastPosX, cv.zoomWidth, cv.zoomHeight);
-
-  //console.log(cv.lastPosX, cv.lastPosX, cv.zoomWidth, cv.zoomHeight)
 
 
   let cvIndex = findIndex(canvas, currentCanvas.id)

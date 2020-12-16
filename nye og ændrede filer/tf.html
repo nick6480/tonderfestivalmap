@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+        <title class='title'></title>
+        <link rel="stylesheet" href="style.css">
+        <!--Skal tilføjes-->
+        <link rel="stylesheet" href="map/festivalmap.css">
+        <!--Skal tilføjes-->
+        <script src='./js/newQ.js'></script>
+        <script type="module"> /*module skal tilføjes*/
+
+
+        /*Skal tilføjes*/
+        import {init} from './map/festivalmap.js';
+        /*Skal tilføjes*/
+
+const readIncidents = function () {
+                // læs m ajax
+                let oReq = new XMLHttpRequest();
+                oReq.addEventListener("load", function () {
+                    incidents = [];
+                    if (this.responseText.length > 0)
+                        incidents = JSON.parse(this.responseText);
+                        for (var i = 0; i < incidents.length; i++) {
+                            var mainContainer = document.getElementById("myData");
+                            var div = document.createElement("div");
+                            div.innerHTML =
+                                            '<b>incident:</b> ' + '<br>' + '<br>' +
+                                            '<b>Name:</b>' + incidents[i].name + '<br>' +
+                                            '<b>mobil: </b>' + incidents[i].mobil + '<br>'+
+                                            '<b>besked:</b>' + incidents[i].besked + '<br>' +
+                                            '<b>Fagperson:</b>' + incidents[i].need + '<br>' +
+                                             /* Skal tilføjes*/ `<canvas id="myCanvas${i}"style="border:1px solid #d3d3d3;"></canvas>` +'<br>' + `<p id="positionX${i}" class="positionsX">${incidents[i].posX}</p>`+ '<br>' +`<p id="positionY${i}" class="positionsY"> ${incidents[i].posY}</p>`+ '<br>' + /* Skal tilføjes*/
+                                             '<button id="slet"'+ i + ' onclick="clickFunc('+i+')">' +
+                                             'Marker som løst</button>';
+
+
+                            mainContainer.appendChild(div);
+
+                            // Skal tilføjes
+                            hasLoaded(incidents)
+                            // Skal tilføjes
+                        }
+
+
+                });
+                oReq.open("GET", "./getIncidents.php");
+                oReq.send();
+            };
+
+
+            function clickFunc(i) {
+                incidents.splice(i, 1);
+                console.log(incidents);
+                };
+
+
+
+          /*Skal tilføjes*/
+            function hasLoaded(incidents) {
+                let canvasArr =  Array.from(document.getElementsByTagName("CANVAS"));
+                let posX = Array.from(document.querySelectorAll(".positionsX"));
+                let posY = Array.from(document.querySelectorAll(".positionsY"));
+                console.log(posX)
+                init(canvasArr, posX, posY)
+            }
+          /*Skal tilføjes*/
+
+
+
+
+
+
+            const doThis = function () {
+                headAndShoulders('Receive');
+                feet(2020);
+                readIncidents();
+            };
+
+            let incidents;
+            window.addEventListener('load', doThis);
+
+        </script>
+    </head>
+    <body>
+        <header><h1 class='title'></h1></header>
+        <main>
+
+            <!-- Skal tilføjes -->
+            <img id="festivalsplads" src="map/festivalsplads.png" alt="Kort over festivalpladsen">
+            <!-- Skal tilføjes -->
+
+            <section id='incidents'></section>
+            <div id="myData" data-value="1">
+            </div>
+            <p><a href='./index.html'>incidents</a></p>
+        </main>
+        <footer></footer>
+    </body>
+</html>

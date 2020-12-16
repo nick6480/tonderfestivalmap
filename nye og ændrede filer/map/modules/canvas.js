@@ -82,7 +82,8 @@ export class Canvas {
         this.lastPinPosX = this.newPinPosX;
         this.lastPinPosY = this.newPinPosY;;
 
-
+        this.finalPinX;
+        this.finalPinY;
 
 
 

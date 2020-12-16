@@ -5,20 +5,26 @@
         <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
         <title class='title'></title>
         <script src='./js/newQ.js'></script>
+
+        <!-- Skal tilføjes -->
         <script type="module" src="map/festivalmap.js"></script>
-        <script type="module">
+        <!-- Skal tilføjes -->
+
+        <script type="module"> // Module skal tilføjes
+
+            /*Skal tilføjes*/
             import {finalPinX} from './map/festivalmap.js';
             import {finalPinY} from './map/festivalmap.js';
+            /*Skal tilføjes*/
 
             const manipulateForm = function (e) {
                 e.preventDefault();
-                // læs m ajax
+
                 let oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function () {
                     let hentet = [];
                    if (this.responseText.length > 0)
                         hentet = JSON.parse(this.responseText); // get and objectify
-                    // udvid array m indtastet
                     let n = $('name').value;
                     let m = $('mobil').value;
                     let b = $('besked').value;
@@ -28,9 +34,10 @@
                         mobil: m,
                         besked: b,
                         need: nn,
+                        /*Skal tilføjes*/
                         posY: finalPinY,
                         posX: finalPinX,
-
+                        /*Skal tilføjes*/
                     };
 
                     hentet.push(o);                             // add new
@@ -52,11 +59,17 @@
     <body>
         <header><h1 class='title'></h1></header>    <!-- autofilled -->
         <main>
+
+
+          <!-- Skal tilføjes -->
           <img id="festivalsplads" style="display: none;"
           src="map/festivalsplads.png" alt="Kort over festivalpladsen">
           <canvas id="myCanvas0"
           style="border:1px solid #d3d3d3;">
           </canvas>
+          <!-- Skal tilføjes -->
+
+
             <form name='form22' action='./receiveAndStore.php' method='post'>
                     <p>
                         <label for='name'>Name:</label>
@@ -81,12 +94,10 @@
                     </p>
                     <p>
                         <button id='butt'>Off You Go </button>
-
                     </p>
             </form>
-              <button id='butt2'>Test</button>
             <p><a href='./tf.html'>incidents</a></p>
         </main>
-        <footer></footer>              <!-- autofilled -->
+        <footer></footer>             
     </body>
 </html>
